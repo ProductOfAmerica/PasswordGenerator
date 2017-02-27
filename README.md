@@ -1,6 +1,8 @@
 Strong Password Generator
 ========
 
+Install plugin here: https://goo.gl/vVuXtZ
+
 Simple chrome plugin extension that randomly generates a password based on user options.
 
 <p align="center">
