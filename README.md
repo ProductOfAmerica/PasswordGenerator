@@ -12,7 +12,6 @@ Simple chrome plugin extension that randomly generates a password based on user 
 5. Select it!
 6. It should not be installed, and you can generate random passwords!
 
-
-<div style="text-align:center">
+<p align="center">
   <img src="github/2017-02-27_14-50-20.png" width="400">
-</div>
+</p>
