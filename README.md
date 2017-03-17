@@ -16,4 +16,4 @@ Simple chrome plugin extension that randomly generates a password based on user 
 3. Click the Load unpacked extensions button
 4. Navigate to the directory that holds the downloaded files
 5. Select it!
-6. It should not be installed, and you can generate random passwords!
+6. It should now be installed, and you can generate random passwords!
