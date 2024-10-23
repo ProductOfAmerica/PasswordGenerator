@@ -16,11 +16,6 @@
   "permissions": [
     "storage"
   ],
-  "host_permissions": [
-    "https://apis.google.com/",
-    "https://ssl.google-analytics.com/",
-    "https://www.google-analytics.com/analytics.js"
-  ],
   "background": {
     "service_worker": "service_worker.js",
     "type": "module"
