@@ -1,160 +1,134 @@
-var Password = {
+const useNumbers = document.getElementById("useNumbers");
 
-  getPattern: function () {
-    var pattern = '[';
-    if (useUppercase.checked)
-      pattern = pattern.concat('A-Z');
-    if (useLowercase.checked)
-      pattern = pattern.concat('a-z');
-    if (useNumbers.checked)
-      pattern = pattern.concat('0-9');
-    if (useSpecial.checked)
-      pattern = pattern.concat("-!$%^&*(#)@_+|~=`\\]{}\[:\";'<>?,.\/");
-    pattern = pattern.concat(']');
+const Password = {
+    charSets: {
+        upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        lower: 'abcdefghijklmnopqrstuvwxyz',
+        numbers: '0123456789',
+        special: "-!$%^&*(#)@_+|~=`\\]{}[\":;'<>?,./",
+    },
 
-    if (pattern.length <= 2)
-      return null;
+    getPattern() {
+        let availableChars = '';
 
-    return new RegExp(pattern);
-  },
+        const useUppercase = document.getElementById('useUppercase');
+        const useLowercase = document.getElementById('useLowercase');
+        const useNumbers = document.getElementById('useNumbers');
+        const useSpecial = document.getElementById('useSpecial');
 
-  getRandomByte: function () {
-    if (window.crypto && window.crypto.getRandomValues) {
-      var temp1 = new Uint8Array(1);
-      window.crypto.getRandomValues(temp1);
-      return temp1[0];
-    }
-    else if (window.msCrypto && window.msCrypto.getRandomValues) {
-      var temp2 = new Uint8Array(1);
-      window.msCrypto.getRandomValues(temp2);
-      return temp2[0];
-    }
-    else {
-      return Math.floor(Math.random() * 256);
-    }
-  },
+        if (useUppercase.checked) availableChars += this.charSets.upper;
+        if (useLowercase.checked) availableChars += this.charSets.lower;
+        if (useNumbers.checked) availableChars += this.charSets.numbers;
+        if (useSpecial.checked) availableChars += this.charSets.special;
 
-  generate: function (length, minNumeric) {
-    var pattern = this.getPattern();
+        return availableChars.length > 0 ? availableChars : null;
+    },
 
-    if (!pattern)
-      return 'No options selected.';
+    getRandomCharFromSet(charSet) {
+        const randomIndex = Math.floor(Math.random() * charSet.length);
+        return charSet[randomIndex];
+    },
 
-    String.prototype.shuffle = function () {
-      for (var a = this.split(""), b = a.length, c = b - 1; c > 0; c--) {
-        var d = Math.floor(Math.random() * (c + 1)), e = a[c];
-        a[c] = a[d];
-        a[d] = e;
-      }
-      return a.join("")
-    };
+    getRandomByte() {
+        const byteArray = new Uint8Array(1);
+        window.crypto.getRandomValues(byteArray);
+        return byteArray[0];
+    },
 
-    String.prototype.replaceAt = function (index, character) {
-      return this.substr(0, index) + character + this.substr(index + character.length);
-    };
-
-    var password = Array.apply(null, {'length': length})
-      .map(function () {
-        var result;
-        while (true) {
-          result = String.fromCharCode(this.getRandomByte());
-          if (pattern.test(result)) {
-            return result;
-          }
+    shuffleArray(array) {
+        // Fisher-Yates Shuffle
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
-      }, this).join('');
+        return array;
+    },
 
-    if (useNumbers.checked) {
-      if (minNumeric > length) //Check for overflow
-        minNumeric = length;
+    generate(length, minNumeric) {
+        const pattern = this.getPattern();
+        if (!pattern) return 'No options selected.';
 
-      //Get random numbers
-      var randomNums = Array.apply(null, new Array(minNumeric)).map(function () {
-        return Math.floor(Math.random() * 10);
-      });
+        // Generate the password as an array of characters
+        let password = Array.from({length}, () => this.getRandomCharFromSet(pattern));
 
-      for (var j = 0; j < randomNums.length; j++)
-        password = password.replaceAt(j, randomNums[j].toString());
-    }
+        // Replace first `minNumeric` characters with random numbers
+        if (useNumbers.checked) {
+            const maxNumeric = Math.min(minNumeric, length); // Ensure no overflow
+            for (let i = 0; i < maxNumeric; i++) {
+                password[i] = this.getRandomCharFromSet(this.charSets.numbers);
+            }
+        }
 
-    return password.shuffle();
-  }
+        // Shuffle and return the password
+        return this.shuffleArray(password).join('');
+    },
 };
 
 function scorePassword(pass) {
-  var score = 0;
-  if (!pass)
-    return score;
+    if (!pass) return 0;
 
-  // award every unique letter until 5 repetitions
-  var letters = {};
-  for (var i = 0; i < pass.length; i++) {
-    letters[pass[i]] = (letters[pass[i]] || 0) + 1;
-    score += 5.0 / letters[pass[i]];
-  }
+    const letters = {};
+    let score = 0;
 
-  // bonus points for mixing it up
-  var variations = {
-    digits: /\d/.test(pass),
-    lower: /[a-z]/.test(pass),
-    upper: /[A-Z]/.test(pass),
-    nonWords: /\W_/.test(pass)
-  };
-
-  var variationCount = 0;
-  for (var check in variations) {
-    variationCount += (variations[check] == true) ? 1 : 0;
-  }
-  score += (variationCount - 1) * 10;
-
-  return parseInt(score);
-}
-
-function checkPassStrength(a) {
-  var b = scorePassword(a);
-  return b > 130 ? "Phenomenal" :
-    b <= 130 && b > 90 ? "Incredible" :
-      b <= 90 && b > 89 ? "Amazing" :
-        b <= 89 && b > 83 ? "Excellent" :
-          b <= 83 && b > 80 ? "Great" :
-            b <= 80 && b > 69 ? "Good" :
-              b <= 69 && b > 66 ? "Fine" :
-                b <= 66 && b > 62 ? "Decent" :
-                  b <= 62 && b > 54 ? "Fair" :
-                    b <= 54 && b > 44 ? "Mediocre" :
-                      b <= 44 && b > 38 ? "Limited" :
-                        b <= 38 && b > 34 ? "Weak" :
-                          b <= 34 && b > 29 ? "Poor" :
-                            b <= 29 && b > 26 ? "Bad" :
-                              b <= 26 && b > 19 ? "Awful" :
-                                b <= 19 && b > 18 ? "Terrible" :
-                                  b <= 18 && b > 19 ? "Dreadful" :
-                                    "Abysmal"
-}
-
-//background-color: #9db6cc;
-var percentColors = [
-  {pct: 0.0, color: {r: 0xff, g: 0x00, b: 0}},
-  {pct: 0.5, color: {r: 0xff, g: 0xff, b: 0}},
-  {pct: 1.0, color: {r: 0x00, g: 0xff, b: 0}}];
-
-var getColorForPercentage = function (pct) {
-  for (var i = 1; i < percentColors.length - 1; i++) {
-    if (pct < percentColors[i].pct) {
-      break;
+    // Count unique characters and their repetitions
+    for (const char of pass) {
+        letters[char] = (letters[char] || 0) + 1;
+        score += 5.0 / letters[char];
     }
-  }
-  var lower = percentColors[i - 1];
-  var upper = percentColors[i];
-  var range = upper.pct - lower.pct;
-  var rangePct = (pct - lower.pct) / range;
-  var pctLower = 1 - rangePct;
-  var pctUpper = rangePct;
-  var color = {
-    r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
-    g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
-    b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
-  };
-  return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
-  // or output as hex if preferred
-};
+
+    // Award points for variety in character types
+    const variations = {
+        digits: /\d/.test(pass),
+        lower: /[a-z]/.test(pass),
+        upper: /[A-Z]/.test(pass),
+        nonWords: /\W/.test(pass),
+    };
+    const variationCount = Object.values(variations).filter(Boolean).length;
+
+    return Math.floor(score + (variationCount - 1) * 10);
+}
+
+function checkPassStrength(password) {
+    const score = scorePassword(password);
+
+    if (score > 130) return "Phenomenal";
+    if (score > 90) return "Incredible";
+    if (score > 80) return "Great";
+    if (score > 69) return "Good";
+    if (score > 54) return "Fair";
+    if (score > 44) return "Mediocre";
+    if (score > 38) return "Limited";
+    if (score > 34) return "Weak";
+    if (score > 29) return "Poor";
+    if (score > 19) return "Awful";
+    return "Abysmal";
+}
+
+const percentColors = [
+    {pct: 0.0, color: {r: 255, g: 0, b: 0}},
+    {pct: 0.5, color: {r: 255, g: 255, b: 0}},
+    {pct: 1.0, color: {r: 0, g: 255, b: 0}}
+];
+
+function getColorForPercentage(pct) {
+    let lower = percentColors[0]; // Default to the lowest
+    let upper = percentColors[percentColors.length - 1]; // Default to the highest
+
+    for (let i = 1; i < percentColors.length; i++) {
+        if (pct < percentColors[i].pct) {
+            lower = percentColors[i - 1];
+            upper = percentColors[i];
+            break;
+        }
+    }
+
+    const rangePct = (pct - lower.pct) / (upper.pct - lower.pct);
+    const pctLower = 1 - rangePct;
+    const pctUpper = rangePct;
+
+    return `rgb(${[
+        Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+        Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+        Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper),
+    ].join(',')})`;
+}

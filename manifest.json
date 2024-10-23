@@ -1,14 +1,14 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Strong Password Generator",
-  "version": "1.2",
+  "version": "1.3",
   "description": "Generates strong random passwords.",
   "icons": {
     "16": "16.png",
     "48": "48.png",
     "128": "128.png"
   },
-  "browser_action": {
+  "action": {
     "default_title": "Strong Password Generator",
     "default_icon": "16.png",
     "default_popup": "passwordGenerator.html"
@@ -16,5 +16,16 @@
   "permissions": [
     "storage"
   ],
-  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://apis.google.com https://www.google-analytics.com/analytics.js; object-src 'self'"
+  "host_permissions": [
+    "https://apis.google.com/",
+    "https://ssl.google-analytics.com/",
+    "https://www.google-analytics.com/analytics.js"
+  ],
+  "background": {
+    "service_worker": "service_worker.js",
+    "type": "module"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }
