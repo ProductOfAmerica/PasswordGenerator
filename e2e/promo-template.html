@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        width: 1280px;
+        height: 440px;
+        background: #0c0c0e;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+      /* Subtle gradient orbs */
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.15;
+      }
+      .orb-1 {
+        width: 500px;
+        height: 500px;
+        background: #3b82f6;
+        top: -100px;
+        left: -100px;
+      }
+      .orb-2 {
+        width: 400px;
+        height: 400px;
+        background: #8b5cf6;
+        bottom: -80px;
+        right: -80px;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 60px;
+      }
+      .text-side {
+        max-width: 380px;
+        color: white;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #60a5fa;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+      }
+      .headline {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .subhead {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.65;
+        color: #8b8b96;
+      }
+      .popup-frame {
+        border-radius: 14px;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.06),
+          0 20px 60px rgba(0, 0, 0, 0.5),
+          0 0 40px rgba(59, 130, 246, 0.08);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .popup-frame img {
+        display: block;
+        width: 320px;
+        height: auto;
+      }
+      /* Variant: side-by-side */
+      .side-by-side .content {
+        gap: 40px;
+      }
+      .side-by-side .text-side {
+        max-width: 320px;
+      }
+      .side-by-side .popups {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      .side-by-side .popup-frame {
+        border-radius: 12px;
+      }
+      .side-by-side .popup-frame img {
+        width: 300px;
+      }
+      .side-by-side .popup-frame.secondary {
+        transform: scale(0.95);
+      }
+    </style>
+  </head>
+  <body id="scene">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="content" id="content"></div>
+  </body>
+</html>

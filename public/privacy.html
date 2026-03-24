@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — Strong Password Generator</title>
+    <style>
+      :root {
+        --color-bg: #f2f3f5;
+        --color-surface: #ffffff;
+        --color-border: #e5e7eb;
+        --color-text: #111827;
+        --color-text-2: #374151;
+        --color-text-3: #6b7280;
+        --color-accent: #3b82f6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-bg: #111113;
+          --color-surface: #1a1a1e;
+          --color-border: #2a2a2f;
+          --color-text: #ececef;
+          --color-text-2: #c4c4ca;
+          --color-text-3: #8b8b96;
+          --color-accent: #60a5fa;
+        }
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.7;
+        padding: 40px 20px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 14px;
+        padding: 36px 32px;
+      }
+      h1 {
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 6px;
+      }
+      .updated {
+        font-size: 13px;
+        color: var(--color-text-3);
+        margin-bottom: 28px;
+      }
+      h2 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--color-text);
+        margin-top: 24px;
+        margin-bottom: 8px;
+      }
+      p {
+        font-size: 14px;
+        color: var(--color-text-2);
+        margin-bottom: 12px;
+      }
+      a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated: March 24, 2026</p>
+
+      <h2>Overview</h2>
+      <p>
+        Strong Password Generator is designed with privacy as a core principle. The extension operates entirely offline
+        and does not collect, transmit, or sell any personal data.
+      </p>
+
+      <h2>Data Collection</h2>
+      <p>
+        This extension does not collect any personally identifiable information. No analytics, telemetry, or tracking of
+        any kind is used.
+      </p>
+
+      <h2>Password Generation</h2>
+      <p>
+        All passwords and passphrases are generated locally in your browser using cryptographically secure randomness.
+        Generated passwords are never stored, logged, or transmitted. They exist only in memory while the popup is open.
+      </p>
+
+      <h2>Settings Storage</h2>
+      <p>
+        Your preferences (generation mode, character count, toggle states, word count, and separator choice) are saved
+        using Chrome's built-in storage API (<code>chrome.storage.sync</code>). If you are signed into Chrome, these
+        settings may sync across your devices via your Google account. No passwords are ever stored — only configuration
+        preferences.
+      </p>
+
+      <h2>Clipboard</h2>
+      <p>
+        When you click a generated password to copy it, the extension writes it to your system clipboard. The clipboard
+        is automatically cleared after 30 seconds for security.
+      </p>
+
+      <h2>Network Requests</h2>
+      <p>
+        This extension makes zero network requests. All assets, including fonts, are bundled locally. The extension
+        functions fully offline.
+      </p>
+
+      <h2>Third Parties</h2>
+      <p>No data is shared with any third party. The extension has no external dependencies at runtime.</p>
+
+      <h2>Permissions</h2>
+      <p>
+        The only permission requested is <code>storage</code>, used solely to persist your configuration preferences
+        across sessions.
+      </p>
+
+      <h2>Chrome Web Store Limited Use Compliance</h2>
+      <p>
+        This extension's use of <code>chrome.storage.sync</code> complies with the
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/limited-use"
+          >Chrome Web Store Limited Use</a
+        >
+        requirements. User data is used solely to provide and improve the extension's core functionality (persisting
+        generation preferences). Data is not transferred to third parties, not used for advertising, and not used for
+        creditworthiness or lending purposes.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        If you have questions about this privacy policy, please open an issue at
+        <a href="https://github.com/ProductOfAmerica/PasswordGenerator/issues"
+          >github.com/ProductOfAmerica/PasswordGenerator</a
+        >.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+node_modules
+.output
+.wxt
+pnpm-lock.yaml
+screenshots
+test-results
+public/fonts

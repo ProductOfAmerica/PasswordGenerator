@@ -1,0 +1,483 @@
+/* Manrope — latin-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url('/fonts/manrope/manrope-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* Manrope — latin */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url('/fonts/manrope/manrope-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Red Hat Mono — latin-ext */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/red-hat-mono/red-hat-mono-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* Red Hat Mono — latin */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/red-hat-mono/red-hat-mono-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #e8e9ec;
+  --color-surface: #f2f3f5;
+  --color-surface-hover: #edeef0;
+  --color-surface-inset: #e9eaed;
+  --color-border: #d1d5db;
+  --color-border-strong: #d1d5db;
+  --color-text: #111827;
+  --color-text-2: #374151;
+  --color-text-3: #6b7280;
+  --color-text-4: #71717a;
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-subtle: #eff6ff;
+  --color-on-accent: #ffffff;
+  --font-body: 'Manrope', sans-serif;
+  --font-mono: 'Red Hat Mono', monospace;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color-scheme: light dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #111113;
+    --color-surface: #1a1a1e;
+    --color-surface-hover: #202025;
+    --color-surface-inset: #151518;
+    --color-border: #2a2a2f;
+    --color-border-strong: #3a3a40;
+    --color-text: #ececef;
+    --color-text-2: #c4c4ca;
+    --color-text-3: #8b8b96;
+    --color-text-4: #84848f;
+    --color-accent: #3b82f6;
+    --color-accent-hover: #60a5fa;
+    --color-accent-subtle: rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* ---- Focus indicators ---- */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- Screen reader only ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ---- Layout ---- */
+.pw-layout {
+  width: 380px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-surface);
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---- Meta row ---- */
+.pw-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-4);
+}
+.pw-strength-label {
+  font-weight: 600;
+}
+
+/* ---- Controls ---- */
+.pw-controls {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Labels & tags ---- */
+.pw-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-2);
+}
+.pw-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-4);
+  background: var(--color-surface-inset);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ---- Title ---- */
+.pw-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pw-title-icon {
+  border-radius: 8px;
+}
+.pw-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+/* ---- Toggle row ---- */
+.pw-toggle-row {
+  width: 100%;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+}
+.pw-toggle-label-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Separator group ---- */
+.pw-sep-group {
+  display: flex;
+  gap: 5px;
+}
+
+/* ---- Password field inner ---- */
+.pw-field-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 10px 11px 14px;
+  min-height: 48px;
+  cursor: pointer;
+}
+.pw-password-text {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  word-break: break-all;
+}
+
+/* ---- Password field animated border ---- */
+.pw-field {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-inset);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+.pw-field::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 11.5px;
+  background: linear-gradient(130deg, #3b82f6 0%, #818cf8 30%, #c084fc 55%, #818cf8 75%, #3b82f6 100%);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  animation: shimmer-border 3s ease-in-out infinite;
+}
+.pw-field:hover::before {
+  opacity: 1;
+}
+.pw-field-copied {
+  box-shadow:
+    0 0 0 2px var(--color-accent),
+    0 0 12px rgba(59, 130, 246, 0.3);
+  transition: box-shadow 0.2s ease;
+}
+.pw-field:not(.pw-field-copied) {
+  transition: box-shadow 0.4s ease;
+}
+.pw-field > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes shimmer-border {
+  0% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+/* ---- Strength line ---- */
+.pw-strength-field-bar {
+  height: 3px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.pw-strength-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition:
+    width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.4s ease;
+}
+
+/* ---- Mode toggle ---- */
+.pw-mode-track {
+  position: relative;
+  display: flex;
+  border-radius: 8px;
+  padding: 3px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+}
+.pw-mode-indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  width: calc(50% - 3px);
+  border-radius: 6px;
+  background: var(--color-surface);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pw-mode-btn {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  padding: 5px 0;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  color: var(--color-text-4);
+}
+.pw-mode-btn.active {
+  color: var(--color-text);
+}
+
+/* ---- Toggle switch ---- */
+.pw-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--color-border);
+  transition: background 0.2s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.pw-switch.on {
+  background: var(--color-accent);
+}
+.pw-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-on-accent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pw-switch.on .pw-switch-knob {
+  left: 18px;
+}
+
+/* ---- Stepper ---- */
+.pw-num {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.pw-num-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  font-family: var(--font-body);
+}
+.pw-num-btn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+.pw-num-btn:active {
+  background: var(--color-border);
+}
+.pw-num-input {
+  width: 36px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.pw-num-input::-webkit-outer-spin-button,
+.pw-num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+/* ---- Separator pill ---- */
+.pw-sep-btn {
+  width: 30px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--color-text-3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pw-sep-btn:hover {
+  border-color: var(--color-border-strong);
+}
+.pw-sep-btn.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+/* ---- Regenerate icon button ---- */
+.pw-regen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  background: none;
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pw-field:hover .pw-regen-btn {
+  color: var(--color-on-accent);
+}
+.pw-regen-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+}
+.pw-regen-btn:active {
+  transform: scale(0.9);
+}
+.pw-check-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--color-accent);
+}
+.pw-field:hover .pw-check-icon {
+  color: var(--color-on-accent);
+}
+
+/* ---- Row ---- */
+.pw-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}

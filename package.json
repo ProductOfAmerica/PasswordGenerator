@@ -1,0 +1,40 @@
+{
+  "name": "strong-password-generator",
+  "description": "Generates strong random passwords.",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "submit": "wxt submit --chrome-zip .output/*-chrome.zip",
+    "submit:dry-run": "wxt submit --dry-run --chrome-zip .output/*-chrome.zip",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/vite": "^4.2.2",
+    "@tsconfig/svelte": "^5.0.8",
+    "@types/chrome": "^0.1.38",
+    "@wxt-dev/module-svelte": "^2.0.4",
+    "prettier": "^3.8.1",
+    "prettier-plugin-svelte": "^3.5.1",
+    "svelte": "^5.53.7",
+    "svelte-check": "^4.4.4",
+    "tailwindcss": "^4.2.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.1",
+    "wxt": "^0.20.20"
+  }
+}
