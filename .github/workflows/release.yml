@@ -11,10 +11,6 @@ on:
           - minor
           - major
         default: patch
-      dry-run:
-        description: 'Test auth and upload without publishing'
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -161,12 +157,6 @@ jobs:
             UPLOAD_STATE=$(jq -r '.uploadState' /tmp/status_response.json)
             jq '{uploadState, itemId, crxVersion}' /tmp/status_response.json 2>/dev/null
           done
-
-          # Publish (skip in dry-run mode)
-          if [ "${{ inputs.dry-run }}" = "true" ]; then
-            echo "Dry run — skipping publish"
-            exit 0
-          fi
 
           echo "Publishing..."
           HTTP_CODE=$(curl -s -o /tmp/publish_response.json -w "%{http_code}" -X POST \
