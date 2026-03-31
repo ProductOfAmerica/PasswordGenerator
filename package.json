@@ -21,6 +21,12 @@
     "submit:dry-run": "wxt submit --dry-run --chrome-zip .output/*-chrome.zip",
     "postinstall": "wxt prepare"
   },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@>=4.0.0 <5.0.5": "5.0.5",
+      "node-forge@<1.4.0": "1.4.0"
+    }
+  },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.2.2",
