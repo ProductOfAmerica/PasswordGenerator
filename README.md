@@ -35,7 +35,7 @@
 
 ## Install
 
-**Chrome Web Store:** _Coming soon_
+**Chrome Web Store:** [Install](https://chromewebstore.google.com/detail/lkahbfdjppdglmacdhifnfaokjealmba)
 
 **Manual:** Load the `.output/chrome-mv3/` directory as an unpacked extension in `chrome://extensions`.
 
