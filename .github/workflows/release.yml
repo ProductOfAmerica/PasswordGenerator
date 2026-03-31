@@ -60,9 +60,10 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Parse service account key
+          # Parse service account key and mask derived secrets
           SA_EMAIL=$(echo "$SA_KEY_JSON" | jq -r '.client_email')
           PRIVATE_KEY=$(echo "$SA_KEY_JSON" | jq -r '.private_key')
+          echo "::add-mask::${SA_EMAIL}"
 
           # Base64url encode helper
           b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
@@ -88,6 +89,8 @@ jobs:
             echo "::error::Failed to obtain access token"
             exit 1
           fi
+          echo "::add-mask::${ACCESS_TOKEN}"
+          echo "::add-mask::${JWT}"
 
           API_BASE="https://chromewebstore.googleapis.com"
           ITEM_PATH="publishers/${PUBLISHER_ID}/items/${EXTENSION_ID}"
@@ -95,14 +98,23 @@ jobs:
           # Upload zip
           ZIP_FILE=$(ls .output/*-chrome.zip)
           echo "Uploading ${ZIP_FILE}..."
-          UPLOAD_RESPONSE=$(curl -sf -X POST \
+          HTTP_CODE=$(curl -s -o /tmp/upload_response.json -w "%{http_code}" -X POST \
             -H "Authorization: Bearer ${ACCESS_TOKEN}" \
             -H "x-goog-api-version: 2" \
             -T "$ZIP_FILE" \
             "${API_BASE}/upload/v2/${ITEM_PATH}:upload")
 
-          echo "$UPLOAD_RESPONSE" | jq .
-          UPLOAD_STATE=$(echo "$UPLOAD_RESPONSE" | jq -r '.uploadState')
+          echo "Upload HTTP status: ${HTTP_CODE}"
+          # Only show safe fields from the response (no emails, project IDs, etc.)
+          jq '{uploadState, itemId, crxVersion}' /tmp/upload_response.json 2>/dev/null || echo "(no JSON response)"
+
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            ERROR_MSG=$(jq -r '.error.message // .error // "unknown error"' /tmp/upload_response.json 2>/dev/null || echo "HTTP ${HTTP_CODE}")
+            echo "::error::Upload failed: ${ERROR_MSG}"
+            exit 1
+          fi
+
+          UPLOAD_STATE=$(jq -r '.uploadState' /tmp/upload_response.json)
 
           if [ "$UPLOAD_STATE" = "FAILURE" ]; then
             echo "::error::Upload failed"
@@ -113,12 +125,12 @@ jobs:
           while [ "$UPLOAD_STATE" = "UPLOAD_IN_PROGRESS" ]; do
             echo "Upload in progress, polling..."
             sleep 5
-            STATUS_RESPONSE=$(curl -sf \
+            curl -s -o /tmp/status_response.json \
               -H "Authorization: Bearer ${ACCESS_TOKEN}" \
               -H "x-goog-api-version: 2" \
-              "${API_BASE}/v2/${ITEM_PATH}:fetchStatus")
-            UPLOAD_STATE=$(echo "$STATUS_RESPONSE" | jq -r '.uploadState')
-            echo "$STATUS_RESPONSE" | jq .
+              "${API_BASE}/v2/${ITEM_PATH}:fetchStatus"
+            UPLOAD_STATE=$(jq -r '.uploadState' /tmp/status_response.json)
+            jq '{uploadState, itemId, crxVersion}' /tmp/status_response.json 2>/dev/null
           done
 
           # Publish (skip in dry-run mode)
@@ -128,11 +140,19 @@ jobs:
           fi
 
           echo "Publishing..."
-          PUBLISH_RESPONSE=$(curl -sf -X POST \
+          HTTP_CODE=$(curl -s -o /tmp/publish_response.json -w "%{http_code}" -X POST \
             -H "Authorization: Bearer ${ACCESS_TOKEN}" \
             -H "x-goog-api-version: 2" \
             -H "Content-Length: 0" \
             "${API_BASE}/v2/${ITEM_PATH}:publish")
 
-          echo "$PUBLISH_RESPONSE" | jq .
+          echo "Publish HTTP status: ${HTTP_CODE}"
+          jq '{state, itemId}' /tmp/publish_response.json 2>/dev/null || echo "(no JSON response)"
+
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            ERROR_MSG=$(jq -r '.error.message // .error // "unknown error"' /tmp/publish_response.json 2>/dev/null || echo "HTTP ${HTTP_CODE}")
+            echo "::error::Publish failed: ${ERROR_MSG}"
+            exit 1
+          fi
+
           echo "Published successfully!"
