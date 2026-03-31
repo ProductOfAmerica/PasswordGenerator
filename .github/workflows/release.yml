@@ -1,0 +1,138 @@
+name: Release to Chrome Web Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Test auth and upload without publishing'
+        type: boolean
+        default: false
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Test, Build & Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec wxt prepare
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Type check
+        run: pnpm check
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E tests
+        run: xvfb-run pnpm exec playwright test e2e/popup.spec.ts
+
+      - name: Zip
+        run: pnpm zip
+
+      - name: Publish to Chrome Web Store
+        env:
+          SA_KEY_JSON: ${{ secrets.CHROME_SERVICE_ACCOUNT_KEY }}
+          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          EXTENSION_ID: lkahbfdjppdglmacdhifnfaokjealmba
+        run: |
+          set -euo pipefail
+
+          # Parse service account key
+          SA_EMAIL=$(echo "$SA_KEY_JSON" | jq -r '.client_email')
+          PRIVATE_KEY=$(echo "$SA_KEY_JSON" | jq -r '.private_key')
+
+          # Base64url encode helper
+          b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+
+          # Build JWT for Chrome Web Store API
+          NOW=$(date +%s)
+          EXP=$((NOW + 3600))
+
+          HEADER=$(printf '{"alg":"RS256","typ":"JWT"}' | b64url)
+          PAYLOAD=$(printf '{"iss":"%s","scope":"https://www.googleapis.com/auth/chromewebstore","aud":"https://oauth2.googleapis.com/token","iat":%d,"exp":%d}' \
+            "$SA_EMAIL" "$NOW" "$EXP" | b64url)
+          SIGNATURE=$(printf '%s.%s' "$HEADER" "$PAYLOAD" \
+            | openssl dgst -sha256 -sign <(printf '%s' "$PRIVATE_KEY") -binary | b64url)
+
+          JWT="${HEADER}.${PAYLOAD}.${SIGNATURE}"
+
+          # Exchange JWT for access token
+          ACCESS_TOKEN=$(curl -sf -X POST 'https://oauth2.googleapis.com/token' \
+            -d "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${JWT}" \
+            | jq -r '.access_token')
+
+          if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+            echo "::error::Failed to obtain access token"
+            exit 1
+          fi
+
+          API_BASE="https://chromewebstore.googleapis.com"
+          ITEM_PATH="publishers/${PUBLISHER_ID}/items/${EXTENSION_ID}"
+
+          # Upload zip
+          ZIP_FILE=$(ls .output/*-chrome.zip)
+          echo "Uploading ${ZIP_FILE}..."
+          UPLOAD_RESPONSE=$(curl -sf -X POST \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "x-goog-api-version: 2" \
+            -T "$ZIP_FILE" \
+            "${API_BASE}/upload/v2/${ITEM_PATH}:upload")
+
+          echo "$UPLOAD_RESPONSE" | jq .
+          UPLOAD_STATE=$(echo "$UPLOAD_RESPONSE" | jq -r '.uploadState')
+
+          if [ "$UPLOAD_STATE" = "FAILURE" ]; then
+            echo "::error::Upload failed"
+            exit 1
+          fi
+
+          # Poll until upload completes if still in progress
+          while [ "$UPLOAD_STATE" = "UPLOAD_IN_PROGRESS" ]; do
+            echo "Upload in progress, polling..."
+            sleep 5
+            STATUS_RESPONSE=$(curl -sf \
+              -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+              -H "x-goog-api-version: 2" \
+              "${API_BASE}/v2/${ITEM_PATH}:fetchStatus")
+            UPLOAD_STATE=$(echo "$STATUS_RESPONSE" | jq -r '.uploadState')
+            echo "$STATUS_RESPONSE" | jq .
+          done
+
+          # Publish (skip in dry-run mode)
+          if [ "${{ inputs.dry-run }}" = "true" ]; then
+            echo "Dry run — skipping publish"
+            exit 0
+          fi
+
+          echo "Publishing..."
+          PUBLISH_RESPONSE=$(curl -sf -X POST \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "x-goog-api-version: 2" \
+            -H "Content-Length: 0" \
+            "${API_BASE}/v2/${ITEM_PATH}:publish")
+
+          echo "$PUBLISH_RESPONSE" | jq .
+          echo "Published successfully!"
