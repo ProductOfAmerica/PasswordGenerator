@@ -27,3 +27,5 @@ screenshots
 *.njsproj
 *.sln
 *.sw?
+.gitnexus
+.claude/skills/gitnexus
