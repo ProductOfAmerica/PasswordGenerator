@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=440, initial-scale=1" />
+    <style>
+      @font-face {
+        font-family: 'Manrope';
+        font-style: normal;
+        font-weight: 300 800;
+        font-display: swap;
+        src: url('../public/fonts/manrope/manrope-latin.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Red Hat Mono';
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: swap;
+        src: url('../public/fonts/red-hat-mono/red-hat-mono-latin.woff2') format('woff2');
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 440px;
+        height: 280px;
+        margin: 0;
+      }
+
+      body {
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(98deg, rgba(8, 14, 27, 0.96) 0%, rgba(12, 18, 35, 0.84) 48%, rgba(37, 46, 78, 0.52) 100%),
+          linear-gradient(134deg, #080d18 0%, #101827 54%, #24314d 100%);
+        color: #ffffff;
+        font-family:
+          'Manrope',
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        inset: -34px -34px auto auto;
+        width: 268px;
+        height: 210px;
+        transform: rotate(10deg);
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+          linear-gradient(0deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+        background-size: 20px 20px;
+        mask-image: linear-gradient(115deg, transparent 0%, #000 46%, #000 76%, transparent 100%);
+        opacity: 0.34;
+      }
+
+      body::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 96px;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.24), transparent);
+        pointer-events: none;
+      }
+
+      .brand {
+        position: absolute;
+        z-index: 3;
+        top: 25px;
+        left: 24px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .brand img {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        box-shadow:
+          0 2px 22px rgba(59, 130, 246, 0.38),
+          0 0 12px rgba(59, 130, 246, 0.22);
+      }
+
+      .brand-name {
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.32);
+      }
+
+      .copy {
+        position: absolute;
+        z-index: 3;
+        top: 78px;
+        left: 24px;
+        width: 172px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.02;
+        letter-spacing: 0;
+        text-shadow: 0 8px 28px rgba(0, 0, 0, 0.34);
+      }
+
+      .support {
+        width: 152px;
+        margin-top: 11px;
+        color: rgba(255, 255, 255, 0.76);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.34;
+      }
+
+      .badges {
+        display: flex;
+        gap: 6px;
+        margin-top: 15px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        height: 20px;
+        padding: 0 8px 2px;
+        border-radius: 4px;
+        border: 1px solid rgba(147, 197, 253, 0.28);
+        background: rgba(219, 234, 254, 0.12);
+        color: #dbeafe;
+        font-size: 9px;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: 0;
+        box-shadow: 0 9px 24px rgba(15, 23, 42, 0.22);
+      }
+
+      .visual {
+        position: absolute;
+        z-index: 2;
+        right: -8px;
+        bottom: -28px;
+        width: 258px;
+        height: 226px;
+      }
+
+      .app-panel {
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 48px;
+        width: 192px;
+        height: 206px;
+        padding: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(20, 20, 27, 0.98), rgba(13, 13, 19, 1));
+        box-shadow:
+          0 28px 58px rgba(0, 0, 0, 0.54),
+          0 0 0 1px rgba(59, 130, 246, 0.1),
+          0 0 44px rgba(59, 130, 246, 0.17);
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #f8fafc;
+        font-size: 8px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .panel-title img {
+        width: 15px;
+        height: 15px;
+        border-radius: 4px;
+      }
+
+      .tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3px;
+        height: 20px;
+        margin-top: 10px;
+        padding: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .tab {
+        display: grid;
+        place-items: center;
+        border-radius: 4px;
+        color: rgba(255, 255, 255, 0.46);
+        font-size: 6px;
+        font-weight: 800;
+      }
+
+      .tab.active {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .password-card {
+        margin-top: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 7px;
+        background: #111117;
+      }
+
+      .password-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 32px;
+        padding: 0 8px;
+        color: #f8fafc;
+        font-family: 'Red Hat Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 9px;
+        font-weight: 700;
+      }
+
+      .refresh {
+        width: 13px;
+        height: 13px;
+        border: 2px solid #3b82f6;
+        border-left-color: transparent;
+        border-radius: 50%;
+      }
+
+      .strength {
+        height: 3px;
+        background: linear-gradient(90deg, #52ff2f 0%, #52ff2f 78%, rgba(82, 255, 47, 0.15) 78%);
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 6px;
+        font-weight: 700;
+      }
+
+      .meta strong {
+        color: #52ff2f;
+      }
+
+      .controls {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .control-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 7px;
+        font-weight: 700;
+      }
+
+      .stepper {
+        display: grid;
+        grid-template-columns: 13px 16px 13px;
+        height: 17px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        color: rgba(255, 255, 255, 0.58);
+        font-size: 9px;
+        font-weight: 800;
+      }
+
+      .stepper span {
+        display: grid;
+        place-items: center;
+      }
+
+      .stepper .value {
+        color: #ffffff;
+        border-right: 1px solid rgba(255, 255, 255, 0.09);
+        border-left: 1px solid rgba(255, 255, 255, 0.09);
+      }
+
+      .switch {
+        position: relative;
+        width: 24px;
+        height: 13px;
+        border-radius: 999px;
+        background: #3b82f6;
+      }
+
+      .switch::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #ffffff;
+      }
+
+      .code-sheet {
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        right: 0;
+        width: 98px;
+        height: 236px;
+        overflow: hidden;
+        border: 1px solid rgba(188, 161, 255, 0.24);
+        border-right: 0;
+        border-radius: 8px 0 0 8px;
+        background:
+          linear-gradient(90deg, rgba(9, 18, 36, 0.34), rgba(38, 67, 118, 0.28)),
+          linear-gradient(180deg, #172039 0%, #253964 52%, #4773bd 100%);
+        box-shadow:
+          -18px 18px 44px rgba(0, 0, 0, 0.32),
+          inset 18px 0 36px rgba(255, 255, 255, 0.08);
+      }
+
+      .code-sheet::before {
+        content: '7K9# bQ2! Lm8% x3P@ R5t$ Z0n^ aV6& J1s* H4d+ 9gW? p2Y# 6cN! u8E% 3rX@ 5mL$ t0Q^ 4yP! k8N# 2sV% q6B@ d1M$ r9C^ w3L& z5H* a0F+ n7J?';
+        position: absolute;
+        inset: 11px 8px;
+        color: rgba(255, 255, 255, 0.36);
+        font-family: 'Red Hat Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 7px;
+        font-weight: 700;
+        line-height: 1.58;
+        overflow-wrap: anywhere;
+      }
+
+      .code-sheet::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.24), transparent 38%);
+      }
+
+      .accent-line {
+        position: absolute;
+        z-index: 1;
+        right: 26px;
+        bottom: 0;
+        width: 198px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(83, 226, 169, 0.58), transparent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <img src="../public/icon/128.png" alt="" />
+      <div class="brand-name">Strong Password Generator</div>
+    </div>
+
+    <main class="copy" aria-label="Small promotional tile">
+      <h1>Open-source password generator</h1>
+      <p class="support">Private, customizable, and built for one-click use.</p>
+      <div class="badges" aria-label="Privacy badges">
+        <span class="badge">NO ADS</span>
+        <span class="badge">NO TRACKERS</span>
+      </div>
+    </main>
+
+    <section class="visual" aria-hidden="true">
+      <div class="app-panel">
+        <div class="panel-title">
+          <img src="../public/icon/128.png" alt="" />
+          <span>Strong Password Generator</span>
+        </div>
+        <div class="tabs">
+          <div class="tab active">Random</div>
+          <div class="tab">Passphrase</div>
+        </div>
+        <div class="password-card">
+          <div class="password-row">
+            <span>D7#vK2!sP9qL</span>
+            <span class="refresh"></span>
+          </div>
+          <div class="strength"></div>
+        </div>
+        <div class="meta">
+          <span>Click to copy</span>
+          <strong>Incredible</strong>
+        </div>
+        <div class="controls">
+          <div class="control-row">
+            <span>Characters</span>
+            <div class="stepper"><span>-</span><span class="value">16</span><span>+</span></div>
+          </div>
+          <div class="control-row">
+            <span>Uppercase</span>
+            <span class="switch"></span>
+          </div>
+          <div class="control-row">
+            <span>Numbers</span>
+            <span class="switch"></span>
+          </div>
+        </div>
+      </div>
+      <div class="code-sheet"></div>
+    </section>
+    <div class="accent-line" aria-hidden="true"></div>
+  </body>
+</html>
