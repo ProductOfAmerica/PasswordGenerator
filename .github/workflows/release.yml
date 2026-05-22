@@ -50,7 +50,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           pnpm version ${{ inputs.version }} --no-git-tag-version
           NEW_VERSION=$(jq -r '.version' package.json)
+          TAG="v${NEW_VERSION}"
           echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "Bumped to v${NEW_VERSION}"
 
       - name: Build
@@ -72,12 +74,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          TAG="${{ steps.bump.outputs.tag }}"
           git add package.json
-          git commit -m "v${{ steps.bump.outputs.version }}"
-          git tag "v${{ steps.bump.outputs.version }}"
-          git push --follow-tags
+          git commit -m "${TAG}"
+          git tag -a "${TAG}" -m "${TAG}"
+          git push origin HEAD:master "${TAG}"
 
       - name: Publish to Chrome Web Store
+        id: chrome_publish
         env:
           SA_KEY_JSON: ${{ secrets.CHROME_SERVICE_ACCOUNT_KEY }}
           PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
@@ -174,4 +178,35 @@ jobs:
             exit 1
           fi
 
-          echo "Published successfully!"
+          PUBLISH_STATE=$(jq -r '.state // "UNKNOWN"' /tmp/publish_response.json)
+          echo "zip_file=${ZIP_FILE}" >> "$GITHUB_OUTPUT"
+          echo "upload_state=${UPLOAD_STATE}" >> "$GITHUB_OUTPUT"
+          echo "publish_state=${PUBLISH_STATE}" >> "$GITHUB_OUTPUT"
+          echo "Submitted successfully. Chrome Web Store state: ${PUBLISH_STATE}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.bump.outputs.tag }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          ZIP_FILE: ${{ steps.chrome_publish.outputs.zip_file }}
+          UPLOAD_STATE: ${{ steps.chrome_publish.outputs.upload_state }}
+          PUBLISH_STATE: ${{ steps.chrome_publish.outputs.publish_state }}
+        run: |
+          set -euo pipefail
+
+          NOTES=$(cat <<EOF
+          Chrome Web Store submission:
+          - Version: ${VERSION}
+          - Upload state: ${UPLOAD_STATE}
+          - Publish state: ${PUBLISH_STATE}
+          - The Chrome Web Store may still be reviewing this submission before it is live.
+
+          EOF
+          )
+
+          gh release create "${TAG}" "${ZIP_FILE}#Chrome Web Store package" \
+            --verify-tag \
+            --title "${TAG}" \
+            --generate-notes \
+            --notes "${NOTES}"
