@@ -11,7 +11,11 @@
       body {
         width: 1280px;
         height: 440px;
-        background: #0c0c0e;
+        background:
+          radial-gradient(ellipse 520px 360px at 74% 52%, rgba(35, 45, 76, 0.34), rgba(12, 12, 14, 0) 72%),
+          radial-gradient(ellipse 460px 330px at 93% 76%, rgba(83, 54, 131, 0.34), rgba(12, 12, 14, 0) 70%),
+          radial-gradient(ellipse 520px 350px at 17% 42%, rgba(37, 79, 135, 0.28), rgba(12, 12, 14, 0) 72%),
+          linear-gradient(112deg, #0b111c 0%, #0c0c0e 43%, #10111b 70%, #171225 100%);
         font-family:
           system-ui,
           -apple-system,
@@ -22,30 +26,19 @@
         overflow: hidden;
         position: relative;
       }
-      /* Subtle gradient orbs */
-      .orb {
+      .grain {
         position: absolute;
-        border-radius: 50%;
-        filter: blur(120px);
-        opacity: 0.15;
-      }
-      .orb-1 {
-        width: 500px;
-        height: 500px;
-        background: #3b82f6;
-        top: -100px;
-        left: -100px;
-      }
-      .orb-2 {
-        width: 400px;
-        height: 400px;
-        background: #8b5cf6;
-        bottom: -80px;
-        right: -80px;
+        z-index: 1;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.026;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+        background-size: 160px 160px;
       }
       .content {
         position: relative;
-        z-index: 1;
+        z-index: 2;
         display: flex;
         align-items: center;
         gap: 60px;
@@ -84,18 +77,34 @@
         color: #8b8b96;
       }
       .popup-frame {
+        position: relative;
+        isolation: isolate;
         border-radius: 14px;
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.06),
-          0 20px 60px rgba(0, 0, 0, 0.5),
-          0 0 40px rgba(59, 130, 246, 0.08);
-        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+        overflow: visible;
         flex-shrink: 0;
       }
+      .popup-frame::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        inset: -74px -94px -88px -94px;
+        border-radius: 72px;
+        background: radial-gradient(
+          ellipse at 50% 48%,
+          rgba(47, 63, 99, 0.24) 0%,
+          rgba(33, 42, 68, 0.18) 34%,
+          rgba(20, 24, 39, 0.08) 60%,
+          rgba(12, 12, 14, 0) 86%
+        );
+      }
       .popup-frame img {
+        position: relative;
+        z-index: 1;
         display: block;
         width: 320px;
         height: auto;
+        border-radius: 14px;
       }
       /* Variant: side-by-side */
       .side-by-side .content {
@@ -121,8 +130,7 @@
     </style>
   </head>
   <body id="scene">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <div class="grain" aria-hidden="true"></div>
     <div class="content" id="content"></div>
   </body>
 </html>
