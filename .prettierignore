@@ -5,3 +5,7 @@ pnpm-lock.yaml
 screenshots
 test-results
 public/fonts
+.agents
+.claude
+AGENTS.md
+*.stackdump

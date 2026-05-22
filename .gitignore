@@ -28,4 +28,7 @@ screenshots
 *.sln
 *.sw?
 .gitnexus
-.claude/skills/gitnexus
+.agents
+.claude
+AGENTS.md
+*.stackdump
